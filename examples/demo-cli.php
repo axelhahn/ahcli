@@ -47,7 +47,6 @@ echo $oCli->getlabel();
 
 
 // just to see the internals:
-// ./demo-cli.php -a index -i 4
 echo "----------------------------------------------------------------------\n";
 echo "the options I found so far... \n";
 $options = $oCli->getopt();

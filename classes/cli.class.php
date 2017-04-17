@@ -20,7 +20,7 @@ define("CLIVALUE_NONE", 3);
  * - interactive input for a variable (with optional pattern check)
  * 
  * @package cli
- * @version 1.0
+ * @version 1.1
  * @author Axel Hahn (https://www.axel-hahn.de/)
  * @license GNU GPL v 3.0
  * @link https://github.com/axelhahn/ahcli
@@ -52,7 +52,7 @@ class cli {
      */
     public function __construct($aArgs = false) {
         if ($aArgs) {
-            $this->setArgs($aArgs);
+            $this->setargs($aArgs);
         }
         return true;
     }
@@ -137,23 +137,6 @@ class cli {
     // ----------------------------------------------------------------------
 
     /**
-     * apply a config; used by __constructor ... and can be called separately
-     * 
-     * @param type $aArgs
-     * @return boolean
-     */
-    public function setArgs($aArgs) {
-        foreach (array('label', 'params') as $sKey) {
-            if (!array_key_exists($sKey, $aArgs)) {
-                die(__CLASS__ . ':: ERROR in cli config: missing key [' . $sKey . '] in [array].');
-            }
-        }
-        $this->_aConfig = $aArgs;
-        $this->getopt();
-        return true;
-    }
-
-    /**
      * interactive action; read a value and stor as value; the variable must 
      * exist in config; if a pattern was given the input will be verified 
      * against it.
@@ -178,8 +161,41 @@ class cli {
             }
         }
         // put value to the value store too
-        $this->_aValues[$sVar] = $sValue;
+        $this->setValue($sVar, $sValue);
         return $sValue;
+    }
+    
+    /**
+     * apply a config; used by __constructor ... and can be called separately
+     * 
+     * @param array $aArgs
+     * @return boolean
+     */
+    public function setargs($aArgs) {
+        foreach (array('label', 'params') as $sKey) {
+            if (!array_key_exists($sKey, $aArgs)) {
+                die(__CLASS__ . ':: ERROR in cli config: missing key [' . $sKey . '] in [array].');
+            }
+        }
+        $this->_aConfig = $aArgs;
+        $this->_aValues = array();
+        $this->getopt();
+        return true;
+    }
+    
+    /**
+     * set an variable and its value; this function is used internally
+     * and can be used 
+     * 
+     * @param string  $sVar    variable name (a key below 'params')
+     * @param mixed   $sValue  a value to set
+     * @return boolean
+     */
+    public function setvalue($sVar, $sValue) {
+        if (!array_key_exists($sVar, $this->_aConfig['params'])) {
+            die(__CLASS__ . ':: ERROR in cli config: missing key [params]->[' . $sVar . '] in [array].');
+        }
+        return $this->_aValues[$sVar] = $sValue;
     }
 
     // ----------------------------------------------------------------------
@@ -206,7 +222,6 @@ class cli {
     public function getopt() {
         $aParamdef = $this->_getGetoptParams();
         $aOptions = getopt($aParamdef['short'], $aParamdef['long']);
-        $this->_aValues = array();
 
         foreach ($aOptions as $sVar => $sValue) {
             foreach ($this->_aConfig['params'] as $sParam => $aData) {
@@ -214,7 +229,7 @@ class cli {
                     if (!$this->_checkPattern($sParam, $sValue)) {
                         die();
                     }
-                    $this->_aValues[$sParam] = ($sValue === false && $aData['value'] !== CLIVALUE_REQUIRED) ? true : $sValue;
+                    $this->setValue($sParam, ($sValue === false && $aData['value'] !== CLIVALUE_REQUIRED) ? true : $sValue);
                 }
             }
         }

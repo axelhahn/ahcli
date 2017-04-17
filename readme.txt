@@ -3,7 +3,7 @@
   Axels CLI helper class
   It helps to handle command line arguments.
   
-  version 1.0
+  version 1.1
   GNU GPL v 3.0
 ----------------------------------------------------------------------
 
@@ -97,5 +97,9 @@ USAGE
     showhelp() (string)
       get pre generated help with all parameters and explainations from config 
 	  array
+	  
+    setvalue([varname], [value])
+	  Set or override a value of one of the params.
+	  The [varname] must be an existing key below 'params'.
 
 ----------------------------------------------------------------------

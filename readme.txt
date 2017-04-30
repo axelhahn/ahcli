@@ -3,7 +3,7 @@
   Axels CLI helper class
   It helps to handle command line arguments.
   
-  version 1.1
+  version 1.2
   GNU GPL v 3.0
 ----------------------------------------------------------------------
 
@@ -77,6 +77,11 @@ USAGE
 
   public methods
   
+    color([type], [text]) (boolean)
+	  set output color based on a type. Type is one of
+	    head | input | cli | ok | info | warning | error
+	  If a text was given, then it outputs colored text and resets the color
+	
     getlabel() (string)
       get label and description (from config) to display a header for your tool
       

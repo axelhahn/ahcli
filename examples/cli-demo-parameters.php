@@ -43,14 +43,16 @@ $aParamDefs=array(
 $oCli=new axelhahn\cli($aParamDefs);
 
 // show a headline
-echo $oCli->getlabel();
+$oCli->color('head', $oCli->getlabel());
 
 
 // just to see the internals:
 echo "----------------------------------------------------------------------\n";
+$oCli->color('cli');
 echo "the options I found so far... \n";
 $options = $oCli->getopt();
 print_r($options);
+$oCli->color('reset');
 
 echo "----------------------------------------------------------------------\n";
 
@@ -74,5 +76,5 @@ if ($oCli->getvalue("help")){
 // $ ./demo-cli.php --action index
 // $ ./demo-cli.php --action updateindex
 if ($oCli->getvalue("action")){
-	echo "action is " . $oCli->getvalue("action") . "\n";
+	$oCli->color('info', "INFO: action is " . $oCli->getvalue("action") . "\n");
 }

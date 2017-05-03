@@ -21,7 +21,7 @@ define("CLIVALUE_NONE", 3);
  * - colored text
  * 
  * @package cli
- * @version 1.2
+ * @version 1.03
  * @author Axel Hahn (https://www.axel-hahn.de/)
  * @license GNU GPL v 3.0
  * @link https://github.com/axelhahn/ahcli
@@ -77,14 +77,14 @@ class cli {
     protected $_aThemes = array(
         'default' => array(
             'reset' => array('reset', null),
-            'head' => array('yellow', null),
-            'input' => array('light green', null),
-            'cli' => array('light blue', null),
+            'head' => array('cyan', null),
+            'input' => array('white', 'green'),
+            'cli' => array('light cyan', null),
             
-            'ok' => array('green', null),
+            'ok' => array('light green', null),
             'info' => array('yellow', null),
             'warning' => array('yellow', null),
-            'error' => array('red', null),
+            'error' => array('light red', null),
             // 'warning' => array('black', 'yellow'),
             // 'error' => array('black', 'red'),
         )
@@ -147,7 +147,8 @@ class cli {
      */
     protected function _cliInput($sPrefix, $default = false) {
         
-        $this->color('input', $sPrefix ? $sPrefix : '> ');
+        $this->color('input', $sPrefix ? $sPrefix : '>');
+        echo ' ';
 
         if (PHP_OS == 'WINNT') {
             $sReturn = stream_get_line(STDIN, 1024, PHP_EOL);
@@ -209,7 +210,10 @@ class cli {
 
         $bOK = false;
         while (!$bOK) {
-            $sValue = $this->_cliInput($sVar . '> ');
+			if (array_key_exists('description', $this->_aConfig['params'][$sVar])){
+				echo $this->_aConfig['params'][$sVar]['description'] . "\n";
+			}
+            $sValue = $this->_cliInput($sVar . '>');
 
             if ($this->_checkPattern($sVar, $sValue)) {
                 // echo "Thank you.\n";

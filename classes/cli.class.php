@@ -21,7 +21,7 @@ define("CLIVALUE_NONE", 3);
  * - colored text
  * 
  * @package cli
- * @version 1.03
+ * @version 1.04
  * @author Axel Hahn (https://www.axel-hahn.de/)
  * @license GNU GPL v 3.0
  * @link https://github.com/axelhahn/ahcli
@@ -77,9 +77,9 @@ class cli {
     protected $_aThemes = array(
         'default' => array(
             'reset' => array('reset', null),
-            'head' => array('cyan', null),
+            'head' => array('light cyan', null),
             'input' => array('white', 'green'),
-            'cli' => array('light cyan', null),
+            'cli' => array('cyan', null),
             
             'ok' => array('light green', null),
             'info' => array('yellow', null),

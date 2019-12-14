@@ -21,7 +21,7 @@ define("CLIVALUE_NONE", 3);
  * - colored text
  * 
  * @package cli
- * @version 1.04
+ * @version 1.05
  * @author Axel Hahn (https://www.axel-hahn.de/)
  * @license GNU GPL v 3.0
  * @link https://github.com/axelhahn/ahcli
@@ -77,12 +77,12 @@ class cli {
     protected $_aThemes = array(
         'default' => array(
             'reset' => array('reset', null),
-            'head' => array('light cyan', null),
+            'head' => array('light blue', null),
             'input' => array('white', 'green'),
             'cli' => array('cyan', null),
             
             'ok' => array('light green', null),
-            'info' => array('yellow', null),
+            'info' => array('light cyan', null),
             'warning' => array('yellow', null),
             'error' => array('light red', null),
             // 'warning' => array('black', 'yellow'),
@@ -125,10 +125,16 @@ class cli {
 
         $aData = $this->_aConfig['params'][$sVar];
         if (array_key_exists('pattern', $aData)) {
-            if ($sValue === false || !preg_match($aData['pattern'], $sValue)) {
+            
+            // do not test optional params that exist but have no value
+            if($aData['value']===CLIVALUE_OPTIONAL && !$sValue ){
+                return true;
+            }
+            
+            if ($sValue === false || preg_match($aData['pattern'], $sValue)<1) {
                 $this->color('error', 
                     'ERROR: parameter "' . $sVar . '" (' . $aData['shortinfo'] . ') - it has a wrong value.' . "\n"
-                    . '"' . $sValue . '" does not match ' . $aData['pattern'] . '.' . "\n"
+                    . '"' . $sValue . '" does not match ' . $aData['pattern'] . ' ' . "\n"
                 );
                 return false;
             }
@@ -175,8 +181,10 @@ class cli {
                 }
             }
             $sDots = ''
-                    . ($aData['value'] === CLIVALUE_REQUIRED ? ':' : '')
-                    . ($aData['value'] === CLIVALUE_OPTIONAL ? '::' : '')
+                    . ($aData['value'] === CLIVALUE_REQUIRED 
+                        ? ':' 
+                        : ($aData['value'] === CLIVALUE_OPTIONAL ? '::' : '')
+                    )
             ;
             $sShort.=$aData['short'] . $sDots;
             $aOptions[] = $sParam . $sDots;
@@ -282,13 +290,19 @@ class cli {
         $aParamdef = $this->_getGetoptParams();
         $aOptions = getopt($aParamdef['short'], $aParamdef['long']);
 
+        // echo __METHOD__ . " DEBUG \$aOptions = " . print_r($aOptions, 1);
+        // echo __METHOD__ . " DEBUG \$aParamdef = " . print_r($aParamdef, 1);
         foreach ($aOptions as $sVar => $sValue) {
             foreach ($this->_aConfig['params'] as $sParam => $aData) {
                 if ($sParam == $sVar || $aData['short'] == $sVar) {
                     if (!$this->_checkPattern($sParam, $sValue)) {
                         die();
                     }
-                    $this->setValue($sParam, ($sValue === false && $aData['value'] !== CLIVALUE_REQUIRED) ? true : $sValue);
+                    $this->setValue($sParam, 
+                            ($sValue === false || $aData['value'] == CLIVALUE_NONE) 
+                                ? true 
+                                : $sValue
+                            );
                 }
             }
         }
@@ -303,12 +317,17 @@ class cli {
      */
     public function getvalue($sKey) {
         if (!array_key_exists($sKey, $this->_aConfig['params'])) {
-            die(__CLASS__ . ':: ERROR in cli config: a parameter variable [' . $sKey . '] was not defined.');
+            $this->color('error');
+            die(__CLASS__ . ':: ERROR in cli config: a parameter variable [' . $sKey . '] was not defined.'."\n");
         }
         if (array_key_exists($sKey, $this->_aValues)) {
             return $this->_aValues[$sKey];
         }
         return false;
+    }
+    
+    public function getAllValues(){
+        return $this->_aValues;
     }
 
     /**
@@ -324,7 +343,7 @@ class cli {
         ;
         foreach ($this->_aConfig['params'] as $sParam => $aData) {
             $sReturn.='  --' . $sParam . ' (or -' . $aData['short'] . ') '
-                    . ($aData['value'] === CLIVALUE_REQUIRED ? 'value (required)' : '')
+                    . ($aData['value'] === CLIVALUE_REQUIRED ? '[value] (required)' : '')
                     . ($aData['value'] === CLIVALUE_OPTIONAL ? '[value] (optional)' : '')
                     . "\n"
                     . '    ' . $aData['shortinfo'] . "\n"

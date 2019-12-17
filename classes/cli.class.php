@@ -21,7 +21,7 @@ define("CLIVALUE_NONE", 3);
  * - colored text
  * 
  * @package cli
- * @version 1.05
+ * @version 1.06
  * @author Axel Hahn (https://www.axel-hahn.de/)
  * @license GNU GPL v 3.0
  * @link https://github.com/axelhahn/ahcli
@@ -342,12 +342,15 @@ class cli {
                 . "PARAMETERS:\n"
         ;
         foreach ($this->_aConfig['params'] as $sParam => $aData) {
-            $sReturn.='  --' . $sParam . ' (or -' . $aData['short'] . ') '
-                    . ($aData['value'] === CLIVALUE_REQUIRED ? '[value] (required)' : '')
-                    . ($aData['value'] === CLIVALUE_OPTIONAL ? '[value] (optional)' : '')
+            $sReturn.=(isset($aData['short']) && $aData['short'] ? '  -'.$aData['short']."\n" : "")
+                    .'  --' . $sParam
+                    . ($aData['value'] === CLIVALUE_REQUIRED ? ' [value] (value required)' : '')
+                    . ($aData['value'] === CLIVALUE_OPTIONAL ? ' [=value] (value is optional)' : '')
+                    . ($aData['value'] === CLIVALUE_NONE ? ' (without value)' : '')
                     . "\n"
                     . '    ' . $aData['shortinfo'] . "\n"
-                    . (array_key_exists('description', $aData) ? '    ' . $aData['description'] . "\n" : '')
+                    .(isset($aData['description']) && $aData['description'] ? '    '.$aData['description']."\n" : "")
+                    .(isset($aData['pattern']) && $aData['pattern'] ? '    If a value is given then it will be checked against regex ' . $aData['pattern']."\n" : "")
                     . "\n"
             ;
         }

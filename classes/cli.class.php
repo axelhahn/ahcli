@@ -21,7 +21,7 @@ define("CLIVALUE_NONE", 3);
  * - colored text
  * 
  * @package cli
- * @version 1.06
+ * @version 1.07
  * @author Axel Hahn (https://www.axel-hahn.de/)
  * @license GNU GPL v 3.0
  * @link https://github.com/axelhahn/ahcli
@@ -202,6 +202,19 @@ class cli {
     // ----------------------------------------------------------------------
 
     /**
+     * fore cli mode. The execution stops if php_sapi_name() does not return 
+     * 'cli'
+     * 
+     * @return boolean
+     */
+    public function forceCli(){
+            if (php_sapi_name() !== "cli") {
+            die("ERROR: This script is for command line usage only.");
+        }
+        return true;
+    }
+
+    /**
      * interactive action; read a value and stor as value; the variable must 
      * exist in config; if a pattern was given the input will be verified 
      * against it.
@@ -210,6 +223,7 @@ class cli {
      * @return string
      */
     public function read($sVar) {
+        $this->forceCli();
         if (!array_key_exists($sVar, $this->_aConfig['params'])) {
             die(__CLASS__ . ':: ERROR in cli config: missing key [params]->[' . $sVar . '] in [array].');
         }
@@ -287,6 +301,7 @@ class cli {
      * @return array
      */
     public function getopt() {
+        $this->forceCli();
         $aParamdef = $this->_getGetoptParams();
         $aOptions = getopt($aParamdef['short'], $aParamdef['long']);
 

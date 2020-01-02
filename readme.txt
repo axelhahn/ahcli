@@ -3,7 +3,7 @@
   Axels CLI helper class
   It helps to handle command line arguments.
   
-  version 1.2
+  version 1.07
   GNU GPL v 3.0
 ----------------------------------------------------------------------
 

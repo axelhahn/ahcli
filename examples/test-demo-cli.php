@@ -7,13 +7,13 @@
 // config
 // ----------------------------------------------------------------------
 $sDemoscript='cli-demo-parameters.php';
-$aSets=array(
-	array("-h"                , "call help"),
-	array("-a index"          , "set action to value index"),
-	array("--action index"    , "set action to value index with long parameter style"),
-	array("-a invalidaction"  , "set action to invalid value"),
-	array("-a index --id 3"   , "set action to value index and an additional id"),
-);
+$aSets=[
+	["-h"                , "call help"],
+	["-a index"          , "set action to value index"],
+	["--action index"    , "set action to value index with long parameter style"],
+	["-a invalidaction"  , "set action to invalid value"],
+	["-a index --id 3"   , "set action to value index and an additional id"],
+];
 
 
 // ----------------------------------------------------------------------

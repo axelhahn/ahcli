@@ -11,33 +11,33 @@ require_once(dirname(__DIR__)."/classes/cli.class.php");
 // parameter definitions
 // ----------------------------------------------------------------------
 
-$aParamDefs=array(
+$aParamDefs=[
     'label' => 'C L I - demo script',
     'description' => 'just show a bit the cli class',
-    'params'=>array(
-        'action'=>array(
+    'params'=>[
+        'action'=>[
             'short' => 'a',
             'value'=> CLIVALUE_REQUIRED,
             'pattern_'=>'/^[a-z]*$/i',
             'pattern'=>'/^(index|updateindex)$/i',
             'shortinfo' => 'name of action',
             'description' => 'The action is one of index | updateindex',
-        ),
-        'id'=>array(
+        ],
+        'id'=>[
             'short' => 'i',
             'value'=> CLIVALUE_REQUIRED,
             'pattern'=>'/^[0-9]*$/',
             'shortinfo' => 'profile id of the config',
             'description' => 'The id is an integer value to reference the project.',
-        ),
-        'help'=>array(
+        ],
+        'help'=>[
             'short' => 'h',
             'value'=> CLIVALUE_NONE,
             'shortinfo' => 'show help',
             'description' => '',
-        ),
-    ),
-);
+        ],
+    ],
+];
 
 // init the class with the config array
 $oCli=new axelhahn\cli($aParamDefs);

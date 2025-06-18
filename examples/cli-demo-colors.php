@@ -11,17 +11,17 @@ require_once(dirname(__DIR__)."/classes/cli.class.php");
 // color definitions
 // ----------------------------------------------------------------------
 
-$aColor=array(
-	'reset' => array('reset', null),
-	'head' => array('cyan', null),
-	'input' => array('light green', null),
-	'cli' => array('light blue', null),
+$aColor=[
+	'reset' => ['reset', null],
+	'head' => ['cyan', null],
+	'input' => ['light green', null],
+	'cli' => ['light blue', null],
 
-	'ok' => array('black', 'green'),
-	'info' => array('black', 'yellow'),
-	'warning' => array('black', 'yellow'),
-	'error' => array('white', 'red', null),
-);
+	'ok' => ['black', 'green'],
+	'info' => ['black', 'yellow'],
+	'warning' => ['black', 'yellow'],
+	'error' => ['white', 'red', null],
+];
 
 // ----------------------------------------------------------------------
 // function

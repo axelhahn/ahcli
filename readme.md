@@ -3,7 +3,7 @@
 
   It helps to handle command line arguments.
   
-  version 1.07
+  version 1.09
 
   GNU GPL v 3.0
 
@@ -118,5 +118,8 @@ integer values
     setvalue([varname], [value])
 	  Set or override a value of one of the params.
 	  The [varname] must be an existing key below 'params'.
+
+    stderr([text])
+    Write text to stderr
 
 ----------------------------------------------------------------------

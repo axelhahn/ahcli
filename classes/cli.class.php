@@ -21,7 +21,7 @@ define("CLIVALUE_NONE", 3);
  * - colored text
  * 
  * @package cli
- * @version 1.09
+ * @version 1.10
  * @author Axel Hahn (https://www.axel-hahn.de/)
  * @license GNU GPL v 3.0
  * @link https://github.com/axelhahn/ahcli
@@ -92,7 +92,7 @@ class cli
         'default' => [
             'reset' => ['reset', null],
             'head' => ['light blue', null],
-            'input' => ['white', 'green'],
+            'input' => ['black', 'green'],
             'cli' => ['cyan', null],
 
             'ok' => ['light green', null],
@@ -110,6 +110,11 @@ class cli
      */
     public $sTheme = 'default';
 
+    /**
+     * Array with elements for tab completion in cliInput
+     * @var array
+     */
+    protected array $_aCompletions = [];
 
     // ----------------------------------------------------------------------
 
@@ -163,6 +168,42 @@ class cli
         return true;
     }
 
+
+    /**
+     * Summary of setCompletions
+     * @param array $aCompletions
+     * @return void
+     */
+    public function setCompletions(array $aCompletions=[]){
+        $this->_aCompletions = $aCompletions;
+    }
+
+    /**
+     * Callback function for tab completion
+     * Use setCompletions(<array>) before starting _cliInput()
+     * 
+     * @return array
+     */
+    protected function _cliTabCompletion(){
+        return $this->_aCompletions;
+        /*
+        $rl_info = readline_info();
+
+        $aReturn=[];
+        if ($rl_info['line_buffer'] == '') {
+            $aReturn=$this->_aCompletions;
+        } else {
+            foreach ($this->_aCompletions as $sCompletion) {
+                if (strstr( $sCompletion, $rl_info['line_buffer'])) {
+                    $aReturn[] = $sCompletion;
+                }
+            }
+        }
+        // print_r($aReturn);
+        return $aReturn;
+        */
+    }
+
     /**
      * Helper: cli input to enter a value
      * 
@@ -171,18 +212,24 @@ class cli
      * @param mixed  $default  default value if no value was given
      * @return bool|string
      */
-    protected function _cliInput(string $sPrefix, mixed $default = false): bool|string
+    public function _cliInput(string $sPrefix, mixed $default = false): bool|string
     {
 
-        $this->color('input', $sPrefix ? $sPrefix : '>');
+        $this->color('input', $sPrefix ?: '>');
         echo ' ';
+
+        readline_completion_function([$this, '_cliTabCompletion']);
 
         if (PHP_OS == 'WINNT') {
             $sReturn = stream_get_line(STDIN, 1024, PHP_EOL);
         } else {
             $sReturn = readline('');
         }
-        return $sReturn ? $sReturn : $default;
+
+        // reset tab completion values
+        $this->setCompletions();
+        
+        return $sReturn ?: $default;
     }
 
     /**
@@ -231,7 +278,11 @@ class cli
      */
     public function forceCli(): bool
     {
-        if (php_sapi_name() !== "cli" && php_sapi_name() !== "cgi-fcgi") {
+        if (
+            php_sapi_name() !== "cli"
+            && php_sapi_name() !== "cgi-fcgi"
+            && php_sapi_name() !== "micro"
+        ) {
             die("ERROR: This script is for command line usage only.");
         }
         return true;
@@ -338,6 +389,12 @@ class cli
         // echo __METHOD__ . " DEBUG \$aParamdef = " . print_r($aParamdef, 1);
         foreach ($aOptions as $sVar => $sValue) {
             foreach ($this->_aConfig['params'] as $sParam => $aData) {
+                if (isset($aData['default'])) {
+                    $this->setValue(
+                        $sParam,
+                        $aData['default']
+                    );
+                }
                 if ($sParam == $sVar || $aData['short'] == $sVar) {
                     if (!$this->_checkPattern($sParam, $sValue)) {
                         die();
@@ -348,6 +405,7 @@ class cli
                         ? true
                         : $sValue
                     );
+                    break;
                 }
             }
         }

@@ -3,7 +3,7 @@
 
   It helps to handle command line arguments.
   
-  version 1.09
+  version 1.10
 
   GNU GPL v 3.0
 
@@ -27,7 +27,7 @@
 
 
 ## REQUIREMENTS
-  PHP 5 (and higher)
+  PHP 8 (up to PHP 8.4)
 
 
 ## INSTALL
@@ -66,6 +66,7 @@ Each variable has the following keys:
 								 for CLIVALUE_REQUIRED
                                - CLIVALUE_NONE
 							     to use it as flag only --myparam 
+    'default'    - mixed   - optional: default value if no value was given
     'pattern'    - string  - optional regex ... if a value is given it will be
                              checked against it (see examples below).
                              The class will stop on invalid values.
